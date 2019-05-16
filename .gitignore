@@ -1,0 +1,4 @@
+config.json
+/node_modules/
+screenlog.0
+.nyc_output

@@ -1,0 +1,40 @@
+{
+  "name": "microbitcoin-payment-gateway",
+  "version": "1.0.0",
+  "description": "microbitcoin payment gateway",
+  "main": "scripts/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coranos/microbitcoin-payment-gateway.git"
+  },
+  "scripts": {
+    "eslint": "./node_modules/.bin/eslint 'scripts/**/*.js'",
+    "eslint-test": "./node_modules/.bin/eslint 'test/**/*.js'",
+    "test": "./node_modules/mocha/bin/mocha --recursive -t 100000 test/unit",
+    "api-test": "./node_modules/mocha/bin/mocha --recursive -t 100000 test/api",
+    "coverage": "nyc -x 'test/unit/**' -x 'test/util/**'  ./node_modules/mocha/bin/mocha --recursive -t 100000 test/unit",
+    "start": "node scripts/index.js",
+    "stop": "node scripts/stop.js"
+  },
+  "author": "Coranos",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "cookie-parser": "^1.4.4",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.2",
+    "iso_8583": "^2.6.2",
+    "jsbn": "^1.1.0",
+    "lokijs": "^1.5.6",
+    "request": "^2.88.0",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.12.0",
+    "mocha": "^5.2.0",
+    "nyc": "^14.1.0"
+  }
+}
