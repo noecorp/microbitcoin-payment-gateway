@@ -31,6 +31,18 @@ const expectErrorMessage = async (errorMessage, fn, arg1, arg2, arg3, arg4) => {
   assert.fail(`no error was thrown, expected err.message='${errorMessage}'`);
 };
 
+const registerAccount = (wif) => {
+  const keys = coinjsUtil.getKeys(wif);
+  const request = {};
+  request.action = 'register';
+  request.account = keys.address;
+  const response = paymentGatewayUtil.register(request);
+  if (response.valid != 'true') {
+    throw new Error(`register failed with message ${expectedResponse.message}`);
+  }
+  return response['account-secret'];
+};
+
 describe('payment-gateway', () => {
   describe('payment-gateway', () => {
     describe('register', async () => {
@@ -53,7 +65,7 @@ describe('payment-gateway', () => {
         const actualResponse = fn(request);
         const expectedResponse = {};
         expectedResponse.valid = 'true';
-        expectedResponse.accountSecret = actualResponse.accountSecret;
+        expectedResponse['account-secret'] = actualResponse['account-secret'];
         expectedResponse.message = 'success';
         expect(expectedResponse).to.deep.equal(actualResponse);
       });
@@ -69,7 +81,7 @@ describe('payment-gateway', () => {
       });
     });
     describe('verify', async () => {
-      it('verify', async () => {
+      it.skip('verify', async () => {
         const accountSecret = 'a';
         const wif = wif0;
         const keys = coinjsUtil.getKeys(wif);
@@ -79,7 +91,7 @@ describe('payment-gateway', () => {
         await expectErrorMessage('request.action is required.', fn, request);
         request.action = '';
         await expectErrorMessage('request.action is required to be \'verify\'.', fn, request);
-        request.action = 'register';
+        request.action = 'verify';
         await expectErrorMessage('request.account is required.', fn, request);
         request.account = keys.address;
         await expectErrorMessage('request[\'account-secret\'] is required.', fn, request);
@@ -94,22 +106,28 @@ describe('payment-gateway', () => {
     });
     describe('requestPayment', async () => {
       it('requestPayment', async () => {
+        const secret0 = registerAccount(wif0);
+        const secret1 = registerAccount(wif1);
+        const keys0 = coinjsUtil.getKeys(wif0);
+        const keys1 = coinjsUtil.getKeys(wif1);
+        const nonce = paymentGatewayUtil.getRandomHex32();
         const fn = paymentGatewayUtil.requestPayment;
         const request = {};
         request.action = 'request-payment';
-        // request['to-account'] =
-        //
-        // {
-        //   "action":"request-payment",
-        //   "to-account":"<to-account>",
-        //   "from-account":"<from-account>",
-        //   "to-account-nonce":"<to-account-nonce>"
-        //   "amount":"<amount>",
-        //   "timeout":"<timeout>",
-        //   "to-account-secret":"<to-account-secret>"
-        // }
+        request['to-account'] = keys1.address;
+        request['from-account'] = keys0.address;
+        request['to-account-nonce'] = nonce;
+        request['amount'] = 1;
+        request['timeout'] = 30000;
+        request['to-account-secret'] = secret1;
 
-        fn();
+        fn(request);
+        const actualResponse = fn(request);
+        const expectedResponse = {};
+        expectedResponse.valid = 'true';
+        expectedResponse.message = 'success';
+        expectedResponse['to-account-nonce'] = actualResponse['to-account-nonce'];
+        expect(expectedResponse).to.deep.equal(actualResponse);
       });
     });
     describe('listPaymentRequests', async () => {
@@ -139,11 +157,11 @@ describe('payment-gateway', () => {
   });
 
   beforeEach(async () => {
-    paymentGatewayUtil.deleteDB();
+    paymentGatewayUtil.init();
   });
 
 
   afterEach(async () => {
-    paymentGatewayUtil.deleteDB();
+    paymentGatewayUtil.deactivate();
   });
 });

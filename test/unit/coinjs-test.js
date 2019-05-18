@@ -51,10 +51,10 @@ const getRequest = async (url, formData) => {
     }
 
     request(requestData, (err, httpResponse, body) => {
-      console.log( 'sendRequest response', err, body );
+      // console.log( 'sendRequest response', err, body );
 
       if (err !== null) {
-        console.log('sendRequest response', err, body);
+        // console.log('sendRequest response', err, body);
       }
 
       if (body === undefined) {
@@ -74,7 +74,7 @@ const postRequest = async (url, formData) => {
   }
   return new Promise((resolve) => {
     const body = JSON.stringify(formData);
-    console.log( 'sendRequest request', body );
+    // console.log( 'sendRequest request', body );
 
     request({
       headers: {
@@ -85,7 +85,7 @@ const postRequest = async (url, formData) => {
       method: 'POST',
       timeout: 30000,
     }, (err, httpResponse, body) => {
-      console.log( 'sendRequest response', err, body );
+      // console.log( 'sendRequest response', err, body );
 
       if (err !== null) {
         console.log('sendRequest response', err, body);
@@ -138,10 +138,10 @@ describe('coinjs', () => {
 describe('mbc', () => {
   it('mbc fee', async () => {
     const response = await estimateFee();
-    console.log(response);
+    // console.log(response);
   });
   it('mbc balance', async () => {
     const response = await addressBalance(address);
-    console.log(response);
+    // console.log(response);
   });
 });
