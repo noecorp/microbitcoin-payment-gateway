@@ -2364,7 +2364,8 @@ const sign = (wif, message) => {
   if (message === undefined) {
     throw new Error('message is required.');
   }
-  const signature = window.coinjs.transaction().transactionSig(undefined, wif, undefined, message);
+  const hashBa = Crypto.util.hexToBytes(message);
+  const signature = window.coinjs.transaction().transactionSig(undefined, wif, undefined, hashBa);
   return signature;
 };
 

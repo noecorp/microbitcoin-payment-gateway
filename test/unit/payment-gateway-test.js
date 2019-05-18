@@ -9,6 +9,8 @@ const paymentGatewayUtil = require('../../scripts/util/payment-gateway-util.js')
 const coinjsUtil = require('../../scripts/util/coinjs-util.js');
 
 // constants
+const wif0 = '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAnchuDf';
+const wif1 = '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAvUcVfH';
 
 // variables
 
@@ -66,10 +68,10 @@ describe('payment-gateway', () => {
         expect(expectedResponse).to.deep.equal(actualResponse);
       });
     });
-    describe.only('verify', async () => {
+    describe('verify', async () => {
       it('verify', async () => {
         const accountSecret = 'a';
-        const wif = '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAnchuDf';
+        const wif = wif0;
         const keys = coinjsUtil.getKeys(wif);
         const fn = paymentGatewayUtil.verify;
         await expectErrorMessage('request is required.', fn);
@@ -85,11 +87,28 @@ describe('payment-gateway', () => {
         await expectErrorMessage('request.signature is required.', fn, request);
         request.signature = coinjsUtil.sign(wif, accountSecret);
         const actualResponse = fn(request);
+        const expectedResponse = {};
+        expectedResponse.valid = 'true';
+        expect(expectedResponse).to.deep.equal(actualResponse);
       });
     });
     describe('requestPayment', async () => {
       it('requestPayment', async () => {
         const fn = paymentGatewayUtil.requestPayment;
+        const request = {};
+        request.action = 'request-payment';
+        // request['to-account'] =
+        //
+        // {
+        //   "action":"request-payment",
+        //   "to-account":"<to-account>",
+        //   "from-account":"<from-account>",
+        //   "to-account-nonce":"<to-account-nonce>"
+        //   "amount":"<amount>",
+        //   "timeout":"<timeout>",
+        //   "to-account-secret":"<to-account-secret>"
+        // }
+
         fn();
       });
     });
@@ -117,5 +136,14 @@ describe('payment-gateway', () => {
         fn();
       });
     });
+  });
+
+  beforeEach(async () => {
+    paymentGatewayUtil.deleteDB();
+  });
+
+
+  afterEach(async () => {
+    paymentGatewayUtil.deleteDB();
   });
 });

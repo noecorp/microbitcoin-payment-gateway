@@ -1,6 +1,8 @@
 const coinjsUtil = require('./coinjs-util.js');
 
-const fakeDb = {};
+const crypto = require('crypto');
+
+const fakeDb = new Map();
 fakeDb.accounts = {};
 
 const getRandomHex32 = () => {
@@ -110,6 +112,11 @@ const listPaymentResponse = (request) => {
   return response;
 };
 
+const deleteDB = () => {
+  fakeDb.clear();
+}
+
+exports.deleteDB = deleteDB;
 exports.register = register;
 exports.verify = verify;
 exports.requestPayment = requestPayment;
